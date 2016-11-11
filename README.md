@@ -11,7 +11,7 @@ More request support may come soon. All exposed methods are subject to change.
  
 Usage
 -----
-To install the libary into your project, add msgraph-go inti your `GOPATH`:
+To install the library into your project, add msgraph-go into your `GOPATH`:
  
 ```sh
 $ go get github.com/jkrecek/msgraph-go
