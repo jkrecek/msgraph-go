@@ -1,6 +1,6 @@
 package graph
 
-type GraphMe struct {
+type Me struct {
 	Id                string `json:"id"`
 	UserPrincipalName string `json:"userPrincipalName"`
 	GivenName         string `json:"givenName"`

@@ -1,6 +1,6 @@
 package graph
 
-type GraphCalendar struct {
+type Calendar struct {
 	Id        string `json:"id"`
 	Name      string `json:"name"`
 	Color     string `json:"color"`
