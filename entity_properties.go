@@ -92,6 +92,6 @@ func NewGraphLocation(displayName string) location {
 }
 
 // Often object provided by API are wrapped in value property
-type valueWrapper struct {
+type ValueWrapper struct {
 	Value interface{} `json:"value"`
 }

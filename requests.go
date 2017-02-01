@@ -28,7 +28,7 @@ func (c *Client) GetMe() (*Me, error) {
 }
 
 func (c *Client) GetMeCalendar() ([]*Calendar, error) {
-	wrp := new(valueWrapper)
+	wrp := new(ValueWrapper)
 	wrp.Value = new([]*Calendar)
 	err := c.getRequest("me/calendars", wrp)
 	if err != nil {
@@ -45,7 +45,7 @@ func (c *Client) GetMeCalendar() ([]*Calendar, error) {
 
 func (c *Client) GetCalendarEvents(calendarId string) ([]*Event, error) {
 	path := fmt.Sprintf("me/calendars/%s/events", calendarId)
-	wrp := new(valueWrapper)
+	wrp := new(ValueWrapper)
 	wrp.Value = new([]*Event)
 	err := c.getRequest(path, wrp)
 	if err != nil {
@@ -103,7 +103,7 @@ func (c *Client) DeleteCalendarEvent(calendarId string, eventId string) error {
 }
 
 func (c *Client) GetContacts() ([]*Contact, error) {
-	wrp := new(valueWrapper)
+	wrp := new(ValueWrapper)
 	wrp.Value = new([]*Contact)
 	err := c.getRequest("me/contacts", wrp)
 	if err != nil {
