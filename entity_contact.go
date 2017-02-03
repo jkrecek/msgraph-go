@@ -18,6 +18,24 @@ type Contact struct {
 	// TODO more properties
 }
 
+func (c *Contact) AddHomePhone(phone string) {
+	if phone != "" {
+		c.HomePhones = append(c.HomePhones, phone)
+	}
+}
+
+func (c *Contact) AddMobilePhone(phone string) {
+	if phone != "" {
+		c.MobilePhone = phone
+	}
+}
+
+func (c *Contact) AddBusinessPhone(phone string) {
+	if phone != "" {
+		c.BusinessPhones = append(c.BusinessPhones, phone)
+	}
+}
+
 type nameAddress struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
@@ -26,7 +44,9 @@ type nameAddress struct {
 func NewNameAddresses(addresses ...string) []nameAddress {
 	nameAddresses := make([]nameAddress, len(addresses))
 	for i, address := range addresses {
-		nameAddresses[i] = nameAddress{address, address}
+		if address != "" {
+			nameAddresses[i] = nameAddress{address, address}
+		}
 	}
 
 	return nameAddresses
