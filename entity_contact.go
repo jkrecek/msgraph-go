@@ -7,14 +7,14 @@ type Contact struct {
 	ChangeKey            string        `json:"changeKey,omitempty"`
 	GivenName            string        `json:"givenName,omitempty"`
 	Surname              string        `json:"surname,omitempty"`
-	EmailAddresses       []nameAddress `json:"emailAddresses"`
-	HomePhones           []string      `json:"homePhones"`
-	MobilePhone          string        `json:"mobilePhone"`
-	BusinessPhones       []string      `json:"businessPhones"`
-	CompanyName          string        `json:"companyName"`
-	HomeAddress          address       `json:"homeAddress"`
-	BusinessAddress      address       `json:"businessAddress"`
-	OtherAddress         address       `json:"otherAddress"`
+	EmailAddresses       []nameAddress `json:"emailAddresses,emitempty"`
+	HomePhones           []string      `json:"homePhones,omitempty"`
+	MobilePhone          string        `json:"mobilePhone,omitempty"`
+	BusinessPhones       []string      `json:"businessPhones,omitempty"`
+	CompanyName          string        `json:"companyName,omitempty"`
+	HomeAddress          *address      `json:"homeAddress,omitempty"`
+	BusinessAddress      *address      `json:"businessAddress,omitempty"`
+	OtherAddress         *address      `json:"otherAddress,omitempty"`
 	// TODO more properties
 }
 
