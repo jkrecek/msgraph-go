@@ -7,7 +7,7 @@ type Contact struct {
 	ChangeKey            string        `json:"changeKey,omitempty"`
 	GivenName            string        `json:"givenName,omitempty"`
 	Surname              string        `json:"surname,omitempty"`
-	EmailAddresses       []nameAddress `json:"emailAddresses,emitempty"`
+	EmailAddresses       []nameAddress `json:"emailAddresses,omitempty"`
 	HomePhones           []string      `json:"homePhones,omitempty"`
 	MobilePhone          string        `json:"mobilePhone,omitempty"`
 	BusinessPhones       []string      `json:"businessPhones,omitempty"`

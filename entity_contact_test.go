@@ -115,3 +115,19 @@ func (s *suite) TestMarshal(c *C) {
 
 	c.Assert(string(res), Equals, `{"givenName":"Jane","surname":"Doe","emailAddresses":[{"name":"jane.doe@example.com","address":"jane.doe@example.com"}]}`)
 }
+
+func (s *suite) TestMarshalNoMail(c *C) {
+	cnt := &graph.Contact{
+		GivenName:       "Jane",
+		Surname:         "Doe",
+		CreatedDateTime: graph.NewGraphFlatTime(time.Now()),
+	}
+
+	cnt.Out()
+
+	res, err := json.Marshal(cnt)
+	c.Assert(err, IsNil)
+
+	c.Assert(string(res), Equals, `{"givenName":"Jane","surname":"Doe"}`)
+}
+
