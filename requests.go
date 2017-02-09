@@ -120,7 +120,7 @@ func (c *Client) GetContacts() ([]*Contact, error) {
 
 func (c *Client) CreateContact(contact *Contact) (*Contact, error) {
 	path := fmt.Sprintf("me/contacts/%s", contact.Id)
-	bts, err := json.Marshal(contact)
+	bts, err := json.Marshal(contact.Out())
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (c *Client) CreateContact(contact *Contact) (*Contact, error) {
 
 func (c *Client) UpdateContact(contact *Contact) (*Contact, error) {
 	path := fmt.Sprintf("me/contacts/%s", contact.Id)
-	bts, err := json.Marshal(contact)
+	bts, err := json.Marshal(contact.Out())
 	if err != nil {
 		return nil, err
 	}

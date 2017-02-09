@@ -2,8 +2,8 @@ package graph
 
 type Contact struct {
 	Id                   string        `json:"id,omitempty"`
-	CreatedDateTime      flatTime      `json:"createdDateTime,omitempty"`
-	LastModifiedDateTime flatTime      `json:"lastModifiedDateTime,omitempty"`
+	CreatedDateTime      *flatTime     `json:"createdDateTime,omitempty"`
+	LastModifiedDateTime *flatTime     `json:"lastModifiedDateTime,omitempty"`
 	ChangeKey            string        `json:"changeKey,omitempty"`
 	GivenName            string        `json:"givenName,omitempty"`
 	Surname              string        `json:"surname,omitempty"`
@@ -15,7 +15,13 @@ type Contact struct {
 	HomeAddress          *address      `json:"homeAddress,omitempty"`
 	BusinessAddress      *address      `json:"businessAddress,omitempty"`
 	OtherAddress         *address      `json:"otherAddress,omitempty"`
-	// TODO more properties
+}
+
+func (c *Contact) Out() *Contact {
+	c.CreatedDateTime = nil
+	c.LastModifiedDateTime = nil
+
+	return c
 }
 
 func (c *Contact) AddHomePhone(phone string) {

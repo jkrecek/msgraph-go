@@ -5,6 +5,7 @@ import (
 	"github.com/jkrecek/msgraph-go"
 	. "gopkg.in/check.v1"
 	"testing"
+	"time"
 )
 
 const (
@@ -97,4 +98,20 @@ func (s *suite) TestUnmarshal(c *C) {
 	c.Assert(contacts[0].HomeAddress.CountryOrRegion, Equals, "Czech Republic")
 	c.Assert(contacts[0].HomeAddress.PostalCode, Equals, "11000")
 	c.Assert(contacts[0].CompanyName, Equals, "CMP ENTERPRISES")
+}
+
+func (s *suite) TestMarshal(c *C) {
+	cnt := &graph.Contact{
+		GivenName:       "Jane",
+		Surname:         "Doe",
+		EmailAddresses:  graph.NewNameAddresses("jane.doe@example.com"),
+		CreatedDateTime: graph.NewGraphFlatTime(time.Now()),
+	}
+
+	cnt.Out()
+
+	res, err := json.Marshal(cnt)
+	c.Assert(err, IsNil)
+
+	c.Assert(string(res), Equals, `{"givenName":"Jane","surname":"Doe","emailAddresses":[{"name":"jane.doe@example.com","address":"jane.doe@example.com"}]}`)
 }

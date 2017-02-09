@@ -17,8 +17,8 @@ type flatTime struct {
 	time.Time
 }
 
-func NewGraphFlatTime(t time.Time) flatTime {
-	return flatTime{t}
+func NewGraphFlatTime(t time.Time) *flatTime {
+	return &flatTime{t}
 }
 
 func (t flatTime) MarshalJSON() ([]byte, error) {
