@@ -74,10 +74,7 @@ func (c *Client) doRequest(method string, path string, body io.Reader, v interfa
 		return graphError(link, resp.Body)
 	} else {
 		if v != nil {
-			bts, _ := ioutil.ReadAll(resp.Body)
-			fmt.Println(string(bts))
-			bfr := bytes.NewBuffer(bts)
-			return parseGraphResult(ioutil.NopCloser(bfr), v)
+			return parseGraphResult(resp.Body, v)
 		} else {
 			return nil
 		}
