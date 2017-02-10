@@ -1,12 +1,10 @@
 package graph
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"golang.org/x/oauth2"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
