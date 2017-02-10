@@ -130,4 +130,3 @@ func (s *suite) TestMarshalNoMail(c *C) {
 
 	c.Assert(string(res), Equals, `{"givenName":"Jane","surname":"Doe"}`)
 }
-

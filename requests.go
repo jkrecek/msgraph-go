@@ -3,8 +3,8 @@ package graph
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"log"
 )
 
 func (c *Client) GetGeneric(path string) (GenericGraphResult, error) {
@@ -28,36 +28,32 @@ func (c *Client) GetMe() (*Me, error) {
 }
 
 func (c *Client) GetMeCalendar() ([]*Calendar, error) {
-	wrp := new(ValueWrapper)
-	wrp.Value = new([]*Calendar)
-	err := c.getRequest("me/calendars", wrp)
-	if err != nil {
-		return nil, err
-	}
+	var calendars []*Calendar
 
-	calendars, ok := wrp.Value.(*[]*Calendar)
-	if !ok {
-		return nil, errors.New("GraphCalendar request has invalid type")
-	}
+	err := c.readGetIntoFunc("me/calendars", &Calendar{}, func(c interface{}) {
+		if cal, ok := c.(*Calendar); ok {
+			calendars = append(calendars, cal)
+		} else {
+			log.Println("Expected Calendar ptr")
+		}
+	})
 
-	return *calendars, nil
+	return calendars, err
 }
 
 func (c *Client) GetCalendarEvents(calendarId string) ([]*Event, error) {
+	var events []*Event
+
 	path := fmt.Sprintf("me/calendars/%s/events", calendarId)
-	wrp := new(ValueWrapper)
-	wrp.Value = new([]*Event)
-	err := c.getRequest(path, wrp)
-	if err != nil {
-		return nil, err
-	}
+	err := c.readGetIntoFunc(path, &Event{}, func(c interface{}) {
+		if ev, ok := c.(*Event); ok {
+			events = append(events, ev)
+		} else {
+			log.Println("Expected Event ptr")
+		}
+	})
 
-	events, ok := wrp.Value.(*[]*Event)
-	if !ok {
-		return nil, errors.New("GraphEvents request has invalid type")
-	}
-
-	return *events, nil
+	return events, err
 }
 
 func (c *Client) CreateCalendarEvent(calendarId string, event *Event) (*Event, error) {
@@ -103,19 +99,17 @@ func (c *Client) DeleteCalendarEvent(calendarId string, eventId string) error {
 }
 
 func (c *Client) GetContacts() ([]*Contact, error) {
-	wrp := new(ValueWrapper)
-	wrp.Value = new([]*Contact)
-	err := c.getRequest("me/contacts", wrp)
-	if err != nil {
-		return nil, err
-	}
+	var contacts []*Contact
 
-	contacts, ok := wrp.Value.(*[]*Contact)
-	if !ok {
-		return nil, errors.New("GraphContact request has invalid type")
-	}
+	err := c.readGetIntoFunc("me/contacts", &Contact{}, func(c interface{}) {
+		if cnt, ok := c.(*Contact); ok {
+			contacts = append(contacts, cnt)
+		} else {
+			log.Println("Expected Contact ptr")
+		}
+	})
 
-	return *contacts, nil
+	return contacts, err
 }
 
 func (c *Client) CreateContact(contact *Contact) (*Contact, error) {

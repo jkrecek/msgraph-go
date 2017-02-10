@@ -1,11 +1,15 @@
 package graph
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"golang.org/x/oauth2"
 	"io"
+	"io/ioutil"
 	"net/http"
+	"net/url"
+	"reflect"
 )
 
 const (
@@ -31,7 +35,7 @@ func (c *Client) SetVersion(version string) {
 	c.version = version
 }
 
-func (c *Client) getUrl(path string) string {
+func (c *Client) getAbsoluteUrl(path string) string {
 	return fmt.Sprintf("%s/v%s/%s", HOST_URL, c.version, path)
 }
 
@@ -40,8 +44,19 @@ func (c *Client) getRequest(path string, v interface{}) error {
 }
 
 func (c *Client) doRequest(method string, path string, body io.Reader, v interface{}) error {
-	url := c.getUrl(path)
-	req, err := http.NewRequest(method, url, body)
+	pathUrl, err := url.Parse(path)
+	if err != nil {
+		return err
+	}
+
+	var link string
+	if !pathUrl.IsAbs() {
+		link = c.getAbsoluteUrl(path)
+	} else {
+		link = path
+	}
+
+	req, err := http.NewRequest(method, link, body)
 	if err != nil {
 		return err
 	}
@@ -56,13 +71,42 @@ func (c *Client) doRequest(method string, path string, body io.Reader, v interfa
 	}
 
 	if resp.StatusCode >= 400 {
-		return graphError(url, resp.Body)
+		return graphError(link, resp.Body)
 	} else {
 		if v != nil {
-			return parseGraphResult(resp.Body, v)
+			bts, _ := ioutil.ReadAll(resp.Body)
+			fmt.Println(string(bts))
+			bfr := bytes.NewBuffer(bts)
+			return parseGraphResult(ioutil.NopCloser(bfr), v)
 		} else {
 			return nil
 		}
 
+	}
+}
+
+func (c *Client) readGetIntoFunc(path string, singularValue interface{}, newItemFn func(interface{})) error {
+	wrp := new(ValueWrapper)
+
+	sr := reflect.ValueOf(singularValue).Type()
+	slcr := reflect.SliceOf(sr)
+	valuesReflect := reflect.New(slcr)
+	vals := valuesReflect.Interface()
+	wrp.Value = &vals
+
+	err := c.getRequest(path, wrp)
+	if err != nil {
+		return err
+	}
+
+	refSlc := valuesReflect.Elem()
+	for i := 0; i < refSlc.Len(); i++ {
+		newItemFn(refSlc.Index(i).Interface())
+	}
+
+	if wrp.NextLink == "" {
+		return nil
+	} else {
+		return c.readGetIntoFunc(wrp.NextLink, singularValue, newItemFn)
 	}
 }
