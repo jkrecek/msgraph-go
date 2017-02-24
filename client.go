@@ -3,11 +3,12 @@ package graph
 import (
 	"context"
 	"fmt"
-	"golang.org/x/oauth2"
 	"io"
 	"net/http"
 	"net/url"
 	"reflect"
+
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -67,6 +68,8 @@ func (c *Client) doRequest(method string, path string, body io.Reader, v interfa
 	if err != nil {
 		return err
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
 		return graphError(link, resp.Body)
