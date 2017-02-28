@@ -76,13 +76,13 @@ const (
 }`
 )
 
-type suite struct{}
+type contact_suite struct{}
 
-var _ = Suite(new(suite))
+var _ = Suite(new(contact_suite))
 
 func TestContact(t *testing.T) { TestingT(t) }
 
-func (s *suite) TestUnmarshal(c *C) {
+func (s *contact_suite) TestUnmarshal(c *C) {
 	wrp := new(graph.ValueWrapper)
 	var contacts []*graph.Contact
 	wrp.Value = &contacts
@@ -100,7 +100,7 @@ func (s *suite) TestUnmarshal(c *C) {
 	c.Assert(contacts[0].CompanyName, Equals, "CMP ENTERPRISES")
 }
 
-func (s *suite) TestMarshal(c *C) {
+func (s *contact_suite) TestMarshal(c *C) {
 	cnt := &graph.Contact{
 		GivenName:       "Jane",
 		Surname:         "Doe",
@@ -116,7 +116,7 @@ func (s *suite) TestMarshal(c *C) {
 	c.Assert(string(res), Equals, `{"givenName":"Jane","surname":"Doe","emailAddresses":[{"name":"jane.doe@example.com","address":"jane.doe@example.com"}]}`)
 }
 
-func (s *suite) TestMarshalNoMail(c *C) {
+func (s *contact_suite) TestMarshalNoMail(c *C) {
 	cnt := &graph.Contact{
 		GivenName:       "Jane",
 		Surname:         "Doe",
