@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/jaytaylor/html2text"
 )
 
 const (
@@ -54,6 +56,14 @@ func NewGraphBody(content string) body {
 	return body{
 		ContentType: "text",
 		Content:     content,
+	}
+}
+
+func (b *body) GetText() (string, error) {
+	if b.ContentType == "html" {
+		return html2text.FromString(b.Content)
+	} else {
+		return b.Content, nil
 	}
 }
 

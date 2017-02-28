@@ -106,6 +106,9 @@ func (s *event_suite) TestUnmarshal(c *C) {
 	c.Assert(len(events), Equals, 1)
 	c.Assert(events[0].Subject, Equals, "Daily meeting")
 	c.Assert(events[0].Recurrence.Pattern.Type, Equals, graph.DayRecurrenceFrequency)
+	desc, err := events[0].Body.GetText()
+	c.Assert(err, IsNil)
+	c.Assert(desc, Equals, "")
 }
 
 func (s *event_suite) TestMarshalRecurring(c *C) {
