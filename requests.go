@@ -98,11 +98,20 @@ func (c *Client) DeleteCalendarEvent(calendarId string, eventId string) error {
 	return err
 }
 
-func (c *Client) GetContacts() ([]*Contact, error) {
+func (c *Client) GetDefaultContacts() ([]*Contact, error) {
+	return c.GetContacts("me/contacts")
+}
+
+func (c *Client) GetContactsInFolder(folderId string) ([]*Contact, error) {
+	return c.GetContacts(fmt.Sprintf("me/contactFolders/%s/contacts", folderId))
+}
+
+func (c *Client) GetContacts(path string) ([]*Contact, error) {
 	var contacts []*Contact
 
-	err := c.readGetIntoFunc("me/contacts", &Contact{}, func(c interface{}) {
+	err := c.readGetIntoFunc(path, &Contact{}, func(c interface{}) {
 		if cnt, ok := c.(*Contact); ok {
+			cnt.Path = fmt.Sprintf("%s/%s", path, cnt.Id)
 			contacts = append(contacts, cnt)
 		} else {
 			log.Println("Expected Contact ptr")
@@ -112,8 +121,46 @@ func (c *Client) GetContacts() ([]*Contact, error) {
 	return contacts, err
 }
 
-func (c *Client) CreateContact(contact *Contact) (*Contact, error) {
-	path := fmt.Sprintf("me/contacts/%s", contact.Id)
+func (c *Client) ListContactFolders() ([]*ContactFolder, error) {
+	var contactFolders []*ContactFolder
+	err := c.readGetIntoFunc("me/contactFolders", &ContactFolder{}, func(c interface{}) {
+		if cnt, ok := c.(*ContactFolder); ok {
+			contactFolders = append(contactFolders, cnt)
+		} else {
+			log.Println("Expected ContactFolder ptr")
+		}
+	})
+
+	return contactFolders, err
+}
+
+func (c *Client) CreateContactFolder(folder *ContactFolder) (*ContactFolder, error) {
+	bts, err := json.Marshal(folder)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyReader := bytes.NewReader(bts)
+
+	respContactFolder := new(ContactFolder)
+	err = c.doRequest("POST", "me/contactFolders", bodyReader, respContactFolder)
+	if err != nil {
+		return nil, err
+	}
+
+	return respContactFolder, nil
+}
+
+func (c *Client) CreateDefaultContact(contact *Contact) (*Contact, error) {
+	return c.CreateContact("me/contacts", contact)
+}
+
+func (c *Client) CreateContactInFolder(folderId string, contact *Contact) (*Contact, error) {
+	path := fmt.Sprintf("me/contactFolders/%s/contacts", folderId)
+	return c.CreateContact(path, contact)
+}
+
+func (c *Client) CreateContact(path string, contact *Contact) (*Contact, error) {
 	bts, err := json.Marshal(contact.Out())
 	if err != nil {
 		return nil, err
@@ -127,11 +174,11 @@ func (c *Client) CreateContact(contact *Contact) (*Contact, error) {
 		return nil, err
 	}
 
+	respContact.Path = fmt.Sprintf("%s/%s", path, respContact.Id)
 	return respContact, nil
 }
 
 func (c *Client) UpdateContact(contact *Contact) (*Contact, error) {
-	path := fmt.Sprintf("me/contacts/%s", contact.Id)
 	bts, err := json.Marshal(contact.Out())
 	if err != nil {
 		return nil, err
@@ -140,16 +187,16 @@ func (c *Client) UpdateContact(contact *Contact) (*Contact, error) {
 	bodyReader := bytes.NewReader(bts)
 
 	respContact := new(Contact)
-	err = c.doRequest("PATCH", path, bodyReader, respContact)
+	err = c.doRequest("PATCH", contact.Path, bodyReader, respContact)
 	if err != nil {
 		return nil, err
 	}
 
+	respContact.Path = contact.Path
 	return respContact, nil
 }
 
-func (c *Client) DeleteContact(contactId string) error {
-	path := fmt.Sprintf("me/contacts/%s", contactId)
+func (c *Client) DeleteContact(path string) error {
 	err := c.doRequest("DELETE", path, nil, nil)
 	return err
 }

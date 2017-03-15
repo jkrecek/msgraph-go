@@ -2,6 +2,7 @@ package graph
 
 type Contact struct {
 	Id                   string        `json:"id,omitempty"`
+	Path                 string        `json:"-"`
 	CreatedDateTime      *flatTime     `json:"createdDateTime,omitempty"`
 	LastModifiedDateTime *flatTime     `json:"lastModifiedDateTime,omitempty"`
 	ChangeKey            string        `json:"changeKey,omitempty"`
