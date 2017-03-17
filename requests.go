@@ -41,6 +41,23 @@ func (c *Client) GetMeCalendar() ([]*Calendar, error) {
 	return calendars, err
 }
 
+func (c *Client) CreateCalendar(calendar *Calendar) (*Calendar, error) {
+	bts, err := json.Marshal(calendar)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyReader := bytes.NewReader(bts)
+
+	respCalendar := new(Calendar)
+	err = c.doRequest("POST", "me/calendars", bodyReader, respCalendar)
+	if err != nil {
+		return nil, err
+	}
+
+	return respCalendar, nil
+}
+
 func (c *Client) GetCalendarEvents(calendarId string) ([]*Event, error) {
 	var events []*Event
 
