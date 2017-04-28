@@ -5,10 +5,10 @@ type Event struct {
 	CreatedDateTime      *flatTime    `json:"createdDateTime,omitempty"`
 	LastModifiedDateTime *flatTime    `json:"lastModifiedDateTime,omitempty"`
 	ChangeKey            string       `json:"changeKey,omitempty"`
-	Subject              string       `json:"subject,omitempty"`
+	Subject              string       `json:"subject,required"`
 	Body                 body         `json:"body,omitempty"`
-	Start                timeTimezone `json:"start,omitempty"`
-	End                  timeTimezone `json:"end,omitempty"`
+	Start                timeTimezone `json:"start,required"`
+	End                  timeTimezone `json:"end,required"`
 	Location             *location    `json:"location,omitempty"`
 	Recurrence           *recurrence  `json:"recurrence,omitempty"`
 	IsAllDay             bool         `json:"isAllDay"`
