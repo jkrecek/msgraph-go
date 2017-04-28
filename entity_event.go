@@ -11,6 +11,6 @@ type Event struct {
 	End                  timeTimezone `json:"end,omitempty"`
 	Location             *location    `json:"location,omitempty"`
 	Recurrence           *recurrence  `json:"recurrence,omitempty"`
-	IsAllDay             bool         `json:"isAllDay,omitempty"`
+	IsAllDay             bool         `json:"isAllDay"`
 	// TODO more properties
 }
