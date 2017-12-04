@@ -19,6 +19,7 @@ const (
 type Client struct {
 	native  *http.Client
 	version string
+	headers map[string]string
 }
 
 func NewClient(oauthConfig *oauth2.Config, oauthToken *oauth2.Token) *Client {
@@ -32,6 +33,10 @@ func NewClient(oauthConfig *oauth2.Config, oauthToken *oauth2.Token) *Client {
 
 func (c *Client) SetVersion(version string) {
 	c.version = version
+}
+
+func (c *Client) SetHeaders(headers map[string]string) {
+	c.headers = headers
 }
 
 func (c *Client) getAbsoluteUrl(path string) string {
@@ -56,12 +61,17 @@ func (c *Client) doRequest(method string, path string, body io.Reader, v interfa
 	}
 
 	req, err := http.NewRequest(method, link, body)
+	for header, header_value := range c.headers {
+		req.Header.Set(header, header_value)
+	}
+
 	if err != nil {
 		return err
 	}
 
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
+
 	}
 
 	resp, err := c.native.Do(req)
