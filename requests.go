@@ -115,6 +115,21 @@ func (c *Client) DeleteCalendarEvent(calendarId string, eventId string) error {
 	return err
 }
 
+func (c *Client) GetCalendarViewEvents(calendarId string, startTime string, endTime string) ([]*Event, error) {
+	var events []*Event
+
+	path := fmt.Sprintf("me/calendars/%s/calendarView?startDateTime=%s&endDateTime=%s", calendarId, startTime, endTime)
+	err := c.readGetIntoFunc(path, &Event{}, func(c interface{}) {
+		if ev, ok := c.(*Event); ok {
+			events = append(events, ev)
+		} else {
+			log.Println("Expected Event ptr")
+		}
+	})
+
+	return events, err
+}
+
 func (c *Client) GetDefaultContacts() ([]*Contact, error) {
 	return c.GetContacts("me/contacts")
 }
