@@ -10,9 +10,7 @@ import (
 )
 
 const (
-	FORMAT_NATIVE   = "2006-01-02T15:04:05 MST"
 	FORMAT_DATETIME = "2006-01-02T15:04:05"
-	FORMAT_TIMEZONE = "MST"
 	FORMAT_DATE     = "2006-01-02"
 )
 
@@ -75,7 +73,7 @@ type timeTimezone struct {
 
 func NewGraphTime(t time.Time) timeTimezone {
 	dateTime := time.Time(t).Format(FORMAT_DATETIME)
-	timeZone := time.Time(t).Format(FORMAT_TIMEZONE)
+	timeZone := time.Time(t).Location().String()
 
 	return timeTimezone{
 		DateTime: dateTime,
@@ -84,7 +82,8 @@ func NewGraphTime(t time.Time) timeTimezone {
 }
 
 func (t *timeTimezone) Native() (time.Time, error) {
-	tm, err := time.Parse(FORMAT_NATIVE, fmt.Sprintf("%s %s", t.DateTime, t.TimeZone))
+	loc, _ := time.LoadLocation(t.TimeZone)
+	tm, err := time.ParseInLocation(FORMAT_DATETIME, t.DateTime, loc)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("Error while parsing Graph Time: %s\n", err)
 	}
