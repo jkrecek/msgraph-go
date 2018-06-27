@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"strings"
 )
 
 func (c *Client) GetGeneric(path string) (GenericGraphResult, error) {
@@ -231,4 +233,36 @@ func (c *Client) UpdateContact(contact *Contact) (*Contact, error) {
 func (c *Client) DeleteContact(path string) error {
 	err := c.doRequest("DELETE", path, nil, nil)
 	return err
+}
+
+func (c *Client) CreateSubscription(subscription *Subscription) (*Subscription, error) {
+	bts, err := json.Marshal(subscription)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyReader := bytes.NewReader(bts)
+	fmt.Println("here")
+	fmt.Println(string(bts))
+	respSubscription := new(Subscription)
+	err = c.doRequest("POST", "subscriptions", bodyReader, respSubscription)
+	if err != nil {
+		return nil, err
+	}
+
+	return respSubscription, nil
+}
+
+func (c *Client) PostSubscriptionValidationResponse(validation_token string) (int, *Subscription, error) {
+	respSubscription := new(Subscription)
+
+	req, err := http.NewRequest("POST", "subscriptions", strings.NewReader(fmt.Sprintf("token=%s", validation_token)))
+	req.Header.Set("Content-Type", "text/plain")
+	resp, err := c.native.Do(req)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	parseGraphResult(resp.Body, respSubscription)
+	return resp.StatusCode, respSubscription, nil
 }
