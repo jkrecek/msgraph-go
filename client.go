@@ -21,11 +21,20 @@ type Client struct {
 	version string
 }
 
+// NewClient creates a new Client from a Token.
 func NewClient(oauthConfig *oauth2.Config, oauthToken *oauth2.Token) *Client {
 	ctx := context.Background()
 
 	return &Client{
 		native:  oauthConfig.Client(ctx, oauthToken),
+		version: DEFAULT_VERSION,
+	}
+}
+
+// NewClientTS creates a new Client from a TokenSource.
+func NewClientTS(oauthConfig *oauth2.Config, ctx *context.Context, oauthTokenSource *oauth2.TokenSource) *Client {
+	return &Client{
+		native:  oauth2.NewClient(*ctx, *oauthTokenSource),
 		version: DEFAULT_VERSION,
 	}
 }
