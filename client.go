@@ -1,9 +1,11 @@
 package graph
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -76,6 +78,13 @@ func (c *Client) doRequest(method string, path string, body io.Reader, v interfa
 	resp, err := c.native.Do(req)
 	if err != nil {
 		return err
+	}
+
+	// print body for dev
+	if false {
+		bodyLog, _ := ioutil.ReadAll(resp.Body)
+		fmt.Printf("<<Response body for: %q>>\n%s\n\n", resp.Request.URL.String(), string(bodyLog))
+		resp.Body = ioutil.NopCloser(bytes.NewReader(bodyLog)) // put it back on the body
 	}
 
 	defer resp.Body.Close()
