@@ -17,21 +17,29 @@ const (
 )
 
 type Client struct {
-	native  *http.Client
-	version string
+	native      *http.Client
+	tokenSource *oauth2.TokenSource
+	version     string
 }
 
+// NewClient creates a new Client from a Token.
 func NewClient(oauthConfig *oauth2.Config, oauthToken *oauth2.Token) *Client {
 	ctx := context.Background()
+	ts := oauthConfig.TokenSource(ctx, oauthToken)
 
 	return &Client{
-		native:  oauthConfig.Client(ctx, oauthToken),
-		version: DEFAULT_VERSION,
+		native:      oauthConfig.Client(ctx, oauthToken),
+		tokenSource: &ts,
+		version:     DEFAULT_VERSION,
 	}
 }
 
 func (c *Client) SetVersion(version string) {
 	c.version = version
+}
+
+func (c *Client) GetToken() (token *oauth2.Token, err error) {
+	return (*c.tokenSource).Token()
 }
 
 func (c *Client) getAbsoluteUrl(path string) string {

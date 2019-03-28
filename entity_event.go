@@ -7,10 +7,16 @@ type Event struct {
 	ChangeKey            string       `json:"changeKey,omitempty"`
 	Subject              string       `json:"subject,required"`
 	Body                 body         `json:"body,omitempty"`
+	BodyPreview          string       `json:"bodyPreview,omitempty"`
 	Start                timeTimezone `json:"start,required"`
 	End                  timeTimezone `json:"end,required"`
 	Location             *location    `json:"location,omitempty"`
 	Recurrence           *recurrence  `json:"recurrence,omitempty"`
 	IsAllDay             bool         `json:"isAllDay"`
+	Attendees            []*attendee  `json:"attendees,omitempty"`
+	IsOrganizer          bool         `json:"isOrganizer,omitempty"`
+	Organizer            organizer    `json:"organizer,omitempty"`
+	ShowAs               string       `json:"showAs,omitempty"`
+	Importance           string       `json:"importance,omitempty"`
 	// TODO more properties
 }

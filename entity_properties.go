@@ -198,3 +198,18 @@ func NewRecurrence(recurrenceFrequency RecurrenceFrequency, startDate time.Time,
 
 	return rec
 }
+
+type attendee struct {
+	Type         string         `json:"type"`
+	Status       attendeeStatus `json:"status,omitempty"`
+	EmailAddress nameAddress    `json:"emailAddress,omitempty"`
+}
+
+type attendeeStatus struct {
+	Response string `json:"response,omitempty"`
+	Time     string `json:"time,omitempty"`
+}
+
+type organizer struct {
+	EmailAddress nameAddress `json:"emailAddress,omitempty"`
+}
